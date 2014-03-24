@@ -62,24 +62,25 @@ public class State {
 		//TODO Determine way to know whos children we are generating?
 		
 		//Generate states for all pieces of current side
-		while(start++<end) {
+		while(start<end) {
 			//Skip blank spaces and pieces not on current side
 			if(tiles.get(start) == 0 ||
 					tiles.get(start) % 2 == 0 && player == 1 ||
 					tiles.get(start) % 2 == 1 && player == 0) {
+				start++;
 				continue;
 			}
 			State possibleState = new State(state);
 			if(start%4%2 == 0) {
 				if (start - 4 < 0) {
-					possibleState.isValid();
+					possibleState.setValid(false);
 				} else {
 					swap(tiles, start-4, start);
 				}
 				
 			} else {
 				if (start - 5 < 0) {
-					possibleState.isValid();
+					possibleState.setValid(false);
 				} else {
 					swap(tiles, start-5, start);
 				}
@@ -88,6 +89,7 @@ public class State {
 			if(possibleState.isValid()) {
 				childStates.add(possibleState);
 			}
+			start++;
 		}
 		return childStates;
 	}
@@ -99,24 +101,25 @@ public class State {
 		//TODO Determine way to know whos children we are generating
 
 		//Generate states for all pieces of current side
-		while(start++<end) {
+		while(start<end) {
 			//Skip blank spaces and pieces not on current side
 			if(tiles.get(start) == 0 ||
 					tiles.get(start) % 2 == 0 && player == 1 ||
 					tiles.get(start) % 2 == 1 && player == 0) {
+				start++;
 				continue;
 			}
 			State possibleState = new State(state);
 			if(start%4%2 == 0) {
 				if (start - 3 < 0) {
-					possibleState.isValid();
+					possibleState.setValid(false);
 				} else {
 					swap(tiles, start - 3, start);
 				}
 				
 			} else {
 				if (start - 4 < 0) {
-					possibleState.isValid();
+					possibleState.setValid(false);
 				} else {
 					swap(tiles, start - 4, start);
 				}
@@ -125,6 +128,7 @@ public class State {
 			if(possibleState.isValid()) {
 				childStates.add(possibleState);
 			}
+			start++;
 		}
 		return childStates;
 	}
@@ -136,24 +140,25 @@ public class State {
 		//TODO Determine way to know whos children we are generating
 
 		//Generate states for all pieces of current side
-		while(start++<end) {
+		while(start<end) {
 			//Skip blank spaces and pieces not on current side
 			if(tiles.get(start) == 0 ||
 					tiles.get(start) % 2 == 0 && player == 1 ||
 					tiles.get(start) % 2 == 1 && player == 0) {
+				start++;
 				continue;
 			}
 			State possibleState = new State(state);
 			if(start%4%2 == 0) {
 				if (start + 4 > tiles.size() - 1) {
-					possibleState.isValid();
+					possibleState.setValid(false);
 				} else {
 					swap(tiles, start + 4, start);
 				}
 				
 			} else {
 				if (start + 3 > tiles.size() - 1) {
-					possibleState.isValid();
+					possibleState.setValid(false);
 				} else {
 					swap(tiles, start + 3, start);
 				}
@@ -162,6 +167,7 @@ public class State {
 			if(possibleState.isValid()) {
 				childStates.add(possibleState);
 			}
+			start++;
 		}
 		return childStates;
 	}
@@ -172,24 +178,25 @@ public class State {
 		int end = tiles.size() - 1;
 
 		//Generate states for all pieces of current side
-		while(start++<end) {
+		while(start<end) {
 			//Skip blank spaces and pieces not on current side
 			if(tiles.get(start) == 0 ||
 					tiles.get(start) % 2 == 0 && player == 1 ||
 					tiles.get(start) % 2 == 1 && player == 0) {
+				start++;
 				continue;
 			}
 			State possibleState = new State(state);
 			if(start%4%2 == 0) {
 				if (start + 5 > tiles.size() - 1) {
-					possibleState.isValid();
+					possibleState.setValid(false);
 				} else {
 					swap(tiles, start + 5, start);
 				}
 				
 			} else {
 				if (start + 4 > tiles.size() - 1) {
-					possibleState.isValid();
+					possibleState.setValid(false);
 				} else {
 					swap(tiles, start + 4, start);
 				}
@@ -198,6 +205,7 @@ public class State {
 			if(possibleState.isValid()) {
 				childStates.add(possibleState);
 			}
+			start++;
 		}
 		return childStates;
 	}
@@ -208,24 +216,86 @@ public class State {
 		int end = tiles.size() - 1;
 		
 		//Generate states for all pieces of current side
-		while(start++<end) {
+		while(start<end) {
 			//Skip blank spaces and pieces not on current side
 			if(tiles.get(start) == 0 ||
 					tiles.get(start) % 2 == 0 && player == 1 ||
 					tiles.get(start) % 2 == 1 && player == 0) {
+				start++;
 				continue;
 			}
 			State possibleState = new State(state);
+			//jump sw = 7 se = 9
+			//jump nw = -9 ne = -7
 			if(start%4%2 == 0) {
-				if (start - 4 < 0) {
-					possibleState.isValid();
+				//JumpNW
+				if (start - 4 < 0 || start - 9 < 0) {
+					possibleState.setValid(false);
 				} else {
-					swap(tiles, start-4, start);
+					//If the tile that is being jumped is of the opposite player, jump
+					if(tiles.get(start - 4) == 0 && (tiles.get(start - 4) + 1) % 2 == player) {
+						swap(tiles, start - 9, start);
+						//take the jumped piece of the board
+						tiles.set(start - 4, 0);
+						if(player == 0) {
+							possibleState.whiteLosePiece();
+						} else {
+							possibleState.blackLosePiece();
+						}
+					}	
+				}
+				//JumpNE
+				if (start - 3 < 0 || start - 7 < 0) {
+					possibleState.setValid(false);
+				} else {
+					//If the tile that is being jumped is of the opposite player, jump
+					if(tiles.get(start - 3) == 0 && (tiles.get(start - 3) + 1) % 2 == player) {
+						swap(tiles, start - 7, start);
+						//take the jumped piece of the board
+						tiles.set(start - 3, 0);
+						if(player == 0) {
+							possibleState.whiteLosePiece();
+						} else {
+							possibleState.blackLosePiece();
+						}
+					}	
+				}
+				//JumpSW
+				if (start + 4 > tiles.size() -1 || start + 7 > tiles.size() -1) {
+					possibleState.setValid(false);
+				} else {
+					//If the tile that is being jumped is of the opposite player, jump
+					if(tiles.get(start + 4) == 0 && (tiles.get(start + 4) + 1) % 2 == player) {
+						swap(tiles, start + 7, start);
+						//take the jumped piece of the board
+						tiles.set(start + 4, 0);
+						if(player == 0) {
+							possibleState.whiteLosePiece();
+						} else {
+							possibleState.blackLosePiece();
+						}
+					}	
+				}
+				//JumpSE
+				if (start + 5 > tiles.size() -1 || start + 9 > tiles.size() -1) {
+					possibleState.setValid(false);
+				} else {
+					//If the tile that is being jumped is of the opposite player, jump
+					if(tiles.get(start + 5) == 0 && (tiles.get(start - 5) + 1) % 2 == player) {
+						swap(tiles, start + 9, start);
+						//take the jumped piece of the board
+						tiles.set(start + 5, 0);
+						if(player == 0) {
+							possibleState.whiteLosePiece();
+						} else {
+							possibleState.blackLosePiece();
+						}
+					}	
 				}
 				
 			} else {
 				if (start - 5 < 0) {
-					possibleState.isValid();
+					possibleState.setValid(false);
 				} else {
 					swap(tiles, start-5, start);
 				}
@@ -234,7 +304,9 @@ public class State {
 			if(possibleState.isValid()) {
 				childStates.add(possibleState);
 			}
+			start++;
 		}
+		
 		return childStates;
 	}
 	private static void swap(Vector<Integer> tiles, int a, int b) {
@@ -246,5 +318,11 @@ public class State {
 	public Vector<Integer> getTiles() {
 		return tiles;
 	}
-
+	private void blackLosePiece() {
+		numBlackPieces--;
+	}
+	private void whiteLosePiece() {
+		numWhitePieces--;
+		
+	}
 }
