@@ -54,11 +54,20 @@ public class State {
 		//Init start/end to moving sides pieces
 		int start;
 		int end;
+		//TODO Determine way to know whos children we are generating
+		//If player 1 children
+		if(true) {
+			start = 0;
+			end = 0;
+		} else { //If player 2 children
+			start = 0;
+			end = 0;
+		}
 		
 		//Generate states for all pieces of current side
 		while(start++<end) {
 			State possibleState = new State(state);
-			movePiece(possibleState, Actions.NW, start);
+			swap(possibleState.getTiles(), start-5, start); //TODO get correct offset value
 			//If the move was actually possible, add to list of states
 			if(possibleState.isValid()) {
 				childStates.add(possibleState);
@@ -82,9 +91,14 @@ public class State {
 		// TODO Auto-generated method stub
 		return childStates;
 	}
-	private static void movePiece(State possibleState, Actions a, int piece) {
-		// TODO Auto-generated method stub
+	private static void swap(Vector<Integer> tiles, int a, int b) {
+		int temp = tiles.get(a);
+		tiles.add(a, tiles.get(b));
+		tiles.add(b, temp);
 		
+	}
+	public Vector<Integer> getTiles() {
+		return tiles;
 	}
 
 }
