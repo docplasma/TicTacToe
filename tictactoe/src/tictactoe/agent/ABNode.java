@@ -25,7 +25,6 @@ public class ABNode {
 	 * @return the terminal
 	 */
 	public Boolean isTerminal() {
-		//TODO Implement terminal logic
 		return state.isGoalState();
 	}
 	/**

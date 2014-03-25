@@ -42,16 +42,18 @@ public class State {
 		return 0;
 	}
 	public Boolean isGoalState() {
-		// TODO Auto-generated method stub
-		return null;
+		if(numWhitePieces == 0 || numBlackPieces == 0) {
+			return true;
+		}
+		return false;
 	}
 	public static Vector<State> getChildren(State state, int player) {
 		Vector<State> childStates = new Vector<State>();
-		childStates.addAll(moveNW(state, childStates, player));
-		childStates.addAll(moveNE(state, childStates, player));
-		childStates.addAll(moveSW(state, childStates, player));
-		childStates.addAll(moveSE(state, childStates, player));
-		childStates.addAll(jump(state, childStates, player));
+		moveNW(state, childStates, player);
+		moveNE(state, childStates, player);
+		moveSW(state, childStates, player);
+		moveSE(state, childStates, player);
+		jump(state, childStates, player);
 		return childStates;
 	}
 	private static Vector<State> moveNW(State state, Vector<State> childStates, int player) {	
@@ -68,6 +70,10 @@ public class State {
 					tiles.get(start) % 2 == 0 && player == 1 ||
 					tiles.get(start) % 2 == 1 && player == 0) {
 				start++;
+				continue;
+			}
+			//Skip black men since they cannot move backwards
+			if(tiles.get(start) == 1 && player == 0) {
 				continue;
 			}
 			State possibleState = new State(state);
@@ -98,8 +104,7 @@ public class State {
 		//Init start/end to moving sides pieces
 		int start = 0;
 		int end = tiles.size() - 1;
-		//TODO Determine way to know whos children we are generating
-
+		
 		//Generate states for all pieces of current side
 		while(start<end) {
 			//Skip blank spaces and pieces not on current side
@@ -107,6 +112,10 @@ public class State {
 					tiles.get(start) % 2 == 0 && player == 1 ||
 					tiles.get(start) % 2 == 1 && player == 0) {
 				start++;
+				continue;
+			}
+			//Skip black men since they cannot move backwards
+			if(tiles.get(start) == 1 && player == 0) {
 				continue;
 			}
 			State possibleState = new State(state);
@@ -137,7 +146,6 @@ public class State {
 		//Init start/end to moving sides pieces
 		int start = 0;
 		int end = tiles.size() - 1;
-		//TODO Determine way to know whos children we are generating
 
 		//Generate states for all pieces of current side
 		while(start<end) {
@@ -146,6 +154,10 @@ public class State {
 					tiles.get(start) % 2 == 0 && player == 1 ||
 					tiles.get(start) % 2 == 1 && player == 0) {
 				start++;
+				continue;
+			}
+			//Skip white men since they cannot move backwards
+			if(tiles.get(start) == 2 && player == 0) {
 				continue;
 			}
 			State possibleState = new State(state);
@@ -157,10 +169,10 @@ public class State {
 				}
 				
 			} else {
-				if (start + 3 > tiles.size() - 1) {
+				if (start + 5 > tiles.size() - 1) {
 					possibleState.setValid(false);
 				} else {
-					swap(tiles, start + 3, start);
+					swap(tiles, start + 5, start);
 				}
 			}
 			//If the move was actually possible, add to list of states
@@ -184,6 +196,10 @@ public class State {
 					tiles.get(start) % 2 == 0 && player == 1 ||
 					tiles.get(start) % 2 == 1 && player == 0) {
 				start++;
+				continue;
+			}
+			//Skip white men since they cannot move backwards
+			if(tiles.get(start) == 2 && player == 0) {
 				continue;
 			}
 			State possibleState = new State(state);
@@ -210,10 +226,20 @@ public class State {
 		return childStates;
 	}
 	private static Vector<State> jump(State state, Vector<State> childStates, int player) {
+		jumpNW(state, childStates, player);
+		jumpNE(state, childStates, player);
+		jumpSW(state, childStates, player);
+		jumpSE(state, childStates, player);
+
+
+		return childStates;
+	}
+	private static Vector<State> jumpNW(State state, Vector<State> childStates, int player) {
 		Vector<Integer> tiles = state.getTiles();
 		//Init start/end to moving sides pieces
 		int start = 0;
 		int end = tiles.size() - 1;
+		boolean jumpMade = false;
 		
 		//Generate states for all pieces of current side
 		while(start<end) {
@@ -224,11 +250,15 @@ public class State {
 				start++;
 				continue;
 			}
+			//Skip black men since they cannot move backwards
+			if(tiles.get(start) == 1 && player == 0) {
+				continue;
+			}
 			State possibleState = new State(state);
 			//jump sw = 7 se = 9
 			//jump nw = -9 ne = -7
 			if(start%4%2 == 0) {
-				//JumpNW
+				//JumpNW Starting on even row
 				if (start - 4 < 0 || start - 9 < 0) {
 					possibleState.setValid(false);
 				} else {
@@ -237,6 +267,7 @@ public class State {
 						swap(tiles, start - 9, start);
 						//take the jumped piece of the board
 						tiles.set(start - 4, 0);
+						jumpMade = true;
 						if(player == 0) {
 							possibleState.whiteLosePiece();
 						} else {
@@ -244,60 +275,23 @@ public class State {
 						}
 					}	
 				}
-				//JumpNE
-				if (start - 3 < 0 || start - 7 < 0) {
-					possibleState.setValid(false);
-				} else {
-					//If the tile that is being jumped is of the opposite player, jump
-					if(tiles.get(start - 3) == 0 && (tiles.get(start - 3) + 1) % 2 == player) {
-						swap(tiles, start - 7, start);
-						//take the jumped piece of the board
-						tiles.set(start - 3, 0);
-						if(player == 0) {
-							possibleState.whiteLosePiece();
-						} else {
-							possibleState.blackLosePiece();
-						}
-					}	
-				}
-				//JumpSW
-				if (start + 4 > tiles.size() -1 || start + 7 > tiles.size() -1) {
-					possibleState.setValid(false);
-				} else {
-					//If the tile that is being jumped is of the opposite player, jump
-					if(tiles.get(start + 4) == 0 && (tiles.get(start + 4) + 1) % 2 == player) {
-						swap(tiles, start + 7, start);
-						//take the jumped piece of the board
-						tiles.set(start + 4, 0);
-						if(player == 0) {
-							possibleState.whiteLosePiece();
-						} else {
-							possibleState.blackLosePiece();
-						}
-					}	
-				}
-				//JumpSE
-				if (start + 5 > tiles.size() -1 || start + 9 > tiles.size() -1) {
-					possibleState.setValid(false);
-				} else {
-					//If the tile that is being jumped is of the opposite player, jump
-					if(tiles.get(start + 5) == 0 && (tiles.get(start - 5) + 1) % 2 == player) {
-						swap(tiles, start + 9, start);
-						//take the jumped piece of the board
-						tiles.set(start + 5, 0);
-						if(player == 0) {
-							possibleState.whiteLosePiece();
-						} else {
-							possibleState.blackLosePiece();
-						}
-					}	
-				}
-				
 			} else {
-				if (start - 5 < 0) {
+				//JumpNW Starting on odd row
+				if (start - 4 < 0 || start - 9 < 0) {
 					possibleState.setValid(false);
 				} else {
-					swap(tiles, start-5, start);
+					//If the tile that is being jumped is of the opposite player, jump
+					if(tiles.get(start - 4) == 0 && (tiles.get(start - 4) + 1) % 2 == player) {
+						swap(tiles, start - 9, start);
+						//take the jumped piece of the board
+						tiles.set(start - 4, 0);
+						jumpMade = true;
+						if(player == 0) {
+							possibleState.whiteLosePiece();
+						} else {
+							possibleState.blackLosePiece();
+						}
+					}	
 				}
 			}
 			//If the move was actually possible, add to list of states
@@ -307,7 +301,229 @@ public class State {
 			start++;
 		}
 		
-		return childStates;
+		if(!jumpMade) {
+			return childStates;
+		}
+		//If a jump was made, see if another jump is possible
+		return jump(state, childStates, player);
+	}
+	private static Vector<State> jumpNE(State state, Vector<State> childStates, int player) {
+		Vector<Integer> tiles = state.getTiles();
+		//Init start/end to moving sides pieces
+		int start = 0;
+		int end = tiles.size() - 1;
+		boolean jumpMade = false;
+		
+		//Generate states for all pieces of current side
+		while(start<end) {
+			//Skip blank spaces and pieces not on current side
+			if(tiles.get(start) == 0 ||
+					tiles.get(start) % 2 == 0 && player == 1 ||
+					tiles.get(start) % 2 == 1 && player == 0) {
+				start++;
+				continue;
+			}
+			//Skip black men since they cannot move backwards
+			if(tiles.get(start) == 1 && player == 0) {
+				continue;
+			}
+			State possibleState = new State(state);
+			//jump sw = 7 se = 9
+			//jump nw = -9 ne = -7
+			if(start%4%2 == 0) {
+				//JumpNE
+				if (start - 3 < 0 || start - 7 < 0) {
+					possibleState.setValid(false);
+				} else {
+					//If the tile that is being jumped is of the opposite player, jump
+					if(tiles.get(start - 3) == 0 && (tiles.get(start - 3) + 1) % 2 == player) {
+						swap(tiles, start - 7, start);
+						//take the jumped piece of the board
+						tiles.set(start - 3, 0);
+						jumpMade = true;
+						if(player == 0) {
+							possibleState.whiteLosePiece();
+						} else {
+							possibleState.blackLosePiece();
+						}
+					}	
+				}
+			} else {
+				//JumpNE
+				if (start - 3 < 0 || start - 7 < 0) {
+					possibleState.setValid(false);
+				} else {
+					//If the tile that is being jumped is of the opposite player, jump
+					if(tiles.get(start - 3) == 0 && (tiles.get(start - 3) + 1) % 2 == player) {
+						swap(tiles, start - 7, start);
+						//take the jumped piece of the board
+						tiles.set(start - 3, 0);
+						jumpMade = true;
+						if(player == 0) {
+							possibleState.whiteLosePiece();
+						} else {
+							possibleState.blackLosePiece();
+						}
+					}	
+				}
+			}
+			//If the move was actually possible, add to list of states
+			if(possibleState.isValid()) {
+				childStates.add(possibleState);
+			}
+			start++;
+		}
+		if(!jumpMade) {
+			return childStates;
+		}
+		//If a jump was made, see if another jump is possible
+		return jump(state, childStates, player);
+	}
+	private static Vector<State> jumpSW(State state, Vector<State> childStates, int player) {
+		Vector<Integer> tiles = state.getTiles();
+		//Init start/end to moving sides pieces
+		int start = 0;
+		int end = tiles.size() - 1;
+		boolean jumpMade = false;
+		
+		//Generate states for all pieces of current side
+		while(start<end) {
+			//Skip blank spaces and pieces not on current side
+			if(tiles.get(start) == 0 ||
+					tiles.get(start) % 2 == 0 && player == 1 ||
+					tiles.get(start) % 2 == 1 && player == 0) {
+				start++;
+				continue;
+			}
+			//Skip white men since they cannot move backwards
+			if(tiles.get(start) == 2 && player == 0) {
+				continue;
+			}
+			State possibleState = new State(state);
+			//jump sw = 7 se = 9
+			//jump nw = -9 ne = -7
+			if(start%4%2 == 0) {
+				//JumpSW
+				if (start + 4 > tiles.size() -1 || start + 7 > tiles.size() -1) {
+					possibleState.setValid(false);
+				} else {
+					//If the tile that is being jumped is of the opposite player, jump
+					if(tiles.get(start + 4) == 0 && (tiles.get(start + 4) + 1) % 2 == player) {
+						swap(tiles, start + 7, start);
+						//take the jumped piece of the board
+						tiles.set(start + 4, 0);
+						jumpMade = true;
+						if(player == 0) {
+							possibleState.whiteLosePiece();
+						} else {
+							possibleState.blackLosePiece();
+						}
+					}	
+				}
+			} else {
+				//JumpSW
+				if (start + 5 > tiles.size() -1 || start + 7 > tiles.size() -1) {
+					possibleState.setValid(false);
+				} else {
+					//If the tile that is being jumped is of the opposite player, jump
+					if(tiles.get(start + 5) == 0 && (tiles.get(start + 5) + 1) % 2 == player) {
+						swap(tiles, start + 7, start);
+						//take the jumped piece of the board
+						jumpMade = true;
+						tiles.set(start + 5, 0);
+						if(player == 0) {
+							possibleState.whiteLosePiece();
+						} else {
+							possibleState.blackLosePiece();
+						}
+					}	
+				}
+			}
+			//If the move was actually possible, add to list of states
+			if(possibleState.isValid()) {
+				childStates.add(possibleState);
+			}
+			start++;
+		}
+		if(!jumpMade) {
+			return childStates;
+		}
+		//If a jump was made, see if another jump is possible
+		return jump(state, childStates, player);
+	}
+	private static Vector<State> jumpSE(State state, Vector<State> childStates, int player) {
+		Vector<Integer> tiles = state.getTiles();
+		//Init start/end to moving sides pieces
+		int start = 0;
+		int end = tiles.size() - 1;
+		boolean jumpMade = false;
+		
+		//Generate states for all pieces of current side
+		while(start<end) {
+			//Skip blank spaces and pieces not on current side
+			if(tiles.get(start) == 0 ||
+					tiles.get(start) % 2 == 0 && player == 1 ||
+					tiles.get(start) % 2 == 1 && player == 0) {
+				start++;
+				continue;
+			}
+			//Skip white men since they cannot move backwards
+			if(tiles.get(start) == 2 && player == 0) {
+				continue;
+			}
+			State possibleState = new State(state);
+			//jump sw = 7 se = 9
+			//jump nw = -9 ne = -7
+			if(start%4%2 == 0) {
+				//JumpSE
+				if (start + 5 > tiles.size() -1 || start + 9 > tiles.size() -1) {
+					possibleState.setValid(false);
+				} else {
+					//If the tile that is being jumped is of the opposite player, jump
+					if(tiles.get(start + 5) == 0 && (tiles.get(start + 5) + 1) % 2 == player) {
+						swap(tiles, start + 9, start);
+						//take the jumped piece of the board
+						tiles.set(start + 5, 0);
+						jumpMade = true;
+						if(player == 0) {
+							possibleState.whiteLosePiece();
+						} else {
+							possibleState.blackLosePiece();
+						}
+					}	
+				}
+				
+			} else {
+				
+				//JumpSE
+				if (start + 4 > tiles.size() -1 || start + 9 > tiles.size() -1) {
+					possibleState.setValid(false);
+				} else {
+					//If the tile that is being jumped is of the opposite player, jump
+					if(tiles.get(start + 4) == 0 && (tiles.get(start + 4) + 1) % 2 == player) {
+						swap(tiles, start + 9, start);
+						//take the jumped piece of the board
+						tiles.set(start + 4, 0);
+						jumpMade = true;
+						if(player == 0) {
+							possibleState.whiteLosePiece();
+						} else {
+							possibleState.blackLosePiece();
+						}
+					}	
+				}
+			}
+			//If the move was actually possible, add to list of states
+			if(possibleState.isValid()) {
+				childStates.add(possibleState);
+			}
+			start++;
+		}
+		if(!jumpMade) {
+			return childStates;
+		}
+		//If a jump was made, see if another jump is possible
+		return jump(state, childStates, player);
 	}
 	private static void swap(Vector<Integer> tiles, int a, int b) {
 		int temp = tiles.get(a);
