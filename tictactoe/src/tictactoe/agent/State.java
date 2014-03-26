@@ -1,6 +1,5 @@
 package tictactoe.agent;
 
-import java.util.Collection;
 import java.util.Vector;
 
 public class State {
@@ -8,18 +7,28 @@ public class State {
 	boolean validState;
 	int numWhitePieces;
 	int numBlackPieces;
+	int numWhiteKings;
+	int numBlackKings;
 	Vector<Integer> tiles;
 	public State() {
 		initState();
 	}
 	public State(State state) {
-		initState();
+		validState = true;
+		numWhitePieces = state.getNumWhitePieces();
+		numBlackPieces = state.getNumBlackPieces();
+		numWhiteKings = state.getNumWhiteKings();
+		numBlackKings = state.getNumBlackKings();
+		//TODO Clone tiles from state
+		//tiles = state.getTiles();
 	}
 	
 	private void initState() {
 		validState = true;
 		numWhitePieces = 20;
 		numBlackPieces = 20;
+		numWhiteKings = 0;
+		numBlackKings = 0;
 		tiles = new Vector<Integer>(32);
 		placePieces(0,1); //Starting at pos(0), put 20 white pieces down
 		placePieces(20,2);//Starting at pos(25), put 20 black pieces down
@@ -30,31 +39,6 @@ public class State {
 			tiles.add(start++, piece);
 		}
 		
-	}
-	public boolean isValid() {
-		return validState;
-	}
-	public void setValid(boolean val) {
-		validState = val;
-	}
-	public float getHVal() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	public Boolean isGoalState() {
-		if(numWhitePieces == 0 || numBlackPieces == 0) {
-			return true;
-		}
-		return false;
-	}
-	public static Vector<State> getChildren(State state, int player) {
-		Vector<State> childStates = new Vector<State>();
-		moveNW(state, childStates, player);
-		moveNE(state, childStates, player);
-		moveSW(state, childStates, player);
-		moveSE(state, childStates, player);
-		jump(state, childStates, player);
-		return childStates;
 	}
 	private static Vector<State> moveNW(State state, Vector<State> childStates, int player) {	
 		Vector<Integer> tiles = state.getTiles();
@@ -531,14 +515,82 @@ public class State {
 		tiles.add(b, temp);
 		
 	}
-	public Vector<Integer> getTiles() {
-		return tiles;
-	}
 	private void blackLosePiece() {
 		numBlackPieces--;
 	}
 	private void whiteLosePiece() {
-		numWhitePieces--;
+		numWhitePieces--;	
+	}
+	public boolean isValid() {
+		return validState;
+	}
+	public void setValid(boolean val) {
+		validState = val;
+	}
+	public float getHVal() {
+		// TODO Auto-generated method stub
+		float wPiece = 1;
+		float wKing = (float)1.5;
+		float wDistance =(float) 0.1;
+		float wCornerPiece = (float)0.1;
 		
+		return wPiece * (numWhitePieces - numBlackPieces) + wKing * (numWhiteKings - numBlackKings) +
+				wDistance * getDistance() + wCornerPiece * getNumCornerPieces();
+	}
+	private float getNumCornerPieces() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	private float getDistance() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	public Boolean isGoalState() {
+		if(numWhitePieces == 0 || numBlackPieces == 0) {
+			return true;
+		}
+		return false;
+	}
+	public static Vector<State> getChildren(State state, int player) {
+		Vector<State> childStates = new Vector<State>();
+		moveNW(state, childStates, player);
+		moveNE(state, childStates, player);
+		moveSW(state, childStates, player);
+		moveSE(state, childStates, player);
+		jump(state, childStates, player);
+		return childStates;
+	}
+	/**
+	 * @return the validState
+	 */
+	public boolean isValidState() {
+		return validState;
+	}
+	/**
+	 * @return the numWhitePieces
+	 */
+	public int getNumWhitePieces() {
+		return numWhitePieces;
+	}
+	/**
+	 * @return the numBlackPieces
+	 */
+	public int getNumBlackPieces() {
+		return numBlackPieces;
+	}
+	/**
+	 * @return the numWhiteKings
+	 */
+	public int getNumWhiteKings() {
+		return numWhiteKings;
+	}
+	/**
+	 * @return the numBlackKings
+	 */
+	public int getNumBlackKings() {
+		return numBlackKings;
+	}
+	public Vector<Integer> getTiles() {
+		return tiles;
 	}
 }
