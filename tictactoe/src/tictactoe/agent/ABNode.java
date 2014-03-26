@@ -15,9 +15,9 @@ public class ABNode {
 	public ABNode(ABNode abNode, State possibleState) {
 		// TODO Auto-generated constructor stub
 	}
-	private void initChildNodes() {
+	private void initChildNodes(int player) {
 		childNodes = new Vector<ABNode>();
-		for(State s : ((Vector<State>) State.getChildren(state))) {
+		for(State s : ((Vector<State>) State.getChildren(state, player))) {
 				childNodes.add(new ABNode(this, s));
 		}
 	}
@@ -37,9 +37,9 @@ public class ABNode {
 	/**
 	 * @return the childNodes
 	 */
-	public Vector<ABNode> getChildNodes() {
+	public Vector<ABNode> getChildNodes(int player) {
 		if (childNodes == null) {
-			initChildNodes();
+			initChildNodes(player);
 		}
 		return childNodes;
 	}

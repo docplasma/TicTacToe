@@ -20,7 +20,7 @@ public class Agent {
 		}
 		
 		if (maximizingPlayer) {
-			for(ABNode child : node.getChildNodes()) { //Each child node
+			for(ABNode child : node.getChildNodes(1)) { //Each child node
 				a = Math.max(a, abSearch(child, depth -1, a, b, false));
 				if(b <= a) {
 					break; //B cut-off
@@ -28,7 +28,7 @@ public class Agent {
 				return a;
 			}
 		} else {
-			for(ABNode child : node.getChildNodes())	{ //Each child node
+			for(ABNode child : node.getChildNodes(0))	{ //Each child node
 				b = Math.min(b, abSearch(child, depth - 1, a, b, true));
 				if (b <= a) {
 					break; //a cut-off
