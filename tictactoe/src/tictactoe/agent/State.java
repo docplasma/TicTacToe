@@ -19,8 +19,7 @@ public class State {
 		numBlackPieces = state.getNumBlackPieces();
 		numWhiteKings = state.getNumWhiteKings();
 		numBlackKings = state.getNumBlackKings();
-		//TODO Clone tiles from state
-		//tiles = state.getTiles();
+		tiles = new Vector<Integer>(state.getTiles());
 	}
 	
 	private void initState() {
@@ -30,13 +29,15 @@ public class State {
 		numWhiteKings = 0;
 		numBlackKings = 0;
 		tiles = new Vector<Integer>(32);
-		placePieces(0,1); //Starting at pos(0), put 20 white pieces down
-		placePieces(20,2);//Starting at pos(25), put 20 black pieces down
+		placePieces(0,0,0,31);
+		placePieces(0,1, 0, 12); //Starting at pos(0), put 20 white pieces down
+		placePieces(20,2, 0, 12);//Starting at pos(25), put 20 black pieces down
 	}
 	
-	private void placePieces(int start, int piece) {
-		for (int i = 0; i < 11; i++) {
-			tiles.add(start++, piece);
+	private void placePieces(int start, int piece, int a, int b) {
+		for (int i = 0; i < b; i++) {
+			tiles.add(start, piece);
+			start++;
 		}
 		
 	}
@@ -531,19 +532,40 @@ public class State {
 		// TODO Auto-generated method stub
 		float wPiece = 1;
 		float wKing = (float)1.5;
-		float wDistance =(float) 0.1;
+		float wDistance =(float) 0.01;
 		float wCornerPiece = (float)0.1;
 		
 		return wPiece * (numWhitePieces - numBlackPieces) + wKing * (numWhiteKings - numBlackKings) +
-				wDistance * getDistance() + wCornerPiece * getNumCornerPieces();
+				wDistance * getDistanceValue() + wCornerPiece * getNumCornerPieces();
 	}
 	private float getNumCornerPieces() {
-		// TODO Auto-generated method stub
-		return 0;
+		//Corner Tiles Index = 4, 11, 12, 19, 20
+		float value = 0;
+		if(tiles.get(4) == 2) {
+			value += 1;
+		}
+		if(tiles.get(11) == 2) {
+			value += 1;
+		}
+		if(tiles.get(12) == 2) {
+			value += 1;
+		}
+		if(tiles.get(19) == 2) {
+			value += 1;
+		}
+		if(tiles.get(20) == 2) {
+			value += 1;
+		}
+		return value;
 	}
-	private float getDistance() {
-		// TODO Auto-generated method stub
-		return 0;
+	private float getDistanceValue() {
+		float value = 0;
+		for (int t : tiles) {
+			if (t == 2) {
+				value +=1;
+			}
+		}
+		return value;
 	}
 	public Boolean isGoalState() {
 		if(numWhitePieces == 0 || numBlackPieces == 0) {
