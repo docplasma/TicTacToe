@@ -32,7 +32,6 @@ public class CheckerPiece extends JComponent {
 		this.setPreferredSize(new Dimension(100, 100));
 	}
 	public void paintComponent(Graphics g) {
-		System.out.println("Hey I am being drawn...");
 		g.drawImage(loadImage(pieceType), 0, 0, null);
 	}
 	public BufferedImage loadImage(int pieceType) {
@@ -74,7 +73,6 @@ public class CheckerPiece extends JComponent {
 			e.printStackTrace();
 		}
 		JLabel pieceLabel = new JLabel(new ImageIcon(piece));
-		//pieceLabel.setLocation(xDrawHead, yDrawHead);
 		return pieceLabel;
 		
 		

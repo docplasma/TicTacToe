@@ -36,21 +36,7 @@ public class Checkerboard extends JComponent{
 		}
 		return checkerboard;
 	}
-	/*private JLabel loadCheckerBoard() {
-		BufferedImage checkerboard = null;
-		try {
-			checkerboard = ImageIO.read(new File("resources/checkerboard.png"));
-			System.out.println("loaded image");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		JLabel checkerboardLabel = new JLabel(new ImageIcon(checkerboard));
-		return checkerboardLabel;
-	}*/
 	public void paintComponent(Graphics g) {
 		g.drawImage(checkerboard, 0, 0, null);
 	}
-	/*public JLabel getCheckerboard() {
-		return checkerboard;
-	}*/
 }

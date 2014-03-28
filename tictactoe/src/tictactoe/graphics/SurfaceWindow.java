@@ -1,6 +1,5 @@
 package tictactoe.graphics;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.Vector;
 
@@ -20,10 +19,7 @@ public class SurfaceWindow extends JPanel {
 	public SurfaceWindow() {
 		board = new Checkerboard();
 		checkerPieces = new Vector<CheckerPiece>();
-		//board.setVisible(true);
 		this.setVisible(true);
-		//JLabel checkerboardLabel = board.getCheckerboard();
-		//this.add(checkerboardLabel);
 		this.repaint();
 	}
 	public SurfaceWindow(State state) {
@@ -33,11 +29,8 @@ public class SurfaceWindow extends JPanel {
 		repaint();
 	}
 	public void paintComponent(Graphics g) {
-		//super.paintComponent(g);
 		if(checkerPieces != null) {
-			int num = 0;
 			for(CheckerPiece piece : checkerPieces) {
-				System.out.println("Painting checker number:" + num++);
 				piece.setBounds(piece.getXPos(), piece.getYPos(), 100, 100);
 				add(piece);
 			}

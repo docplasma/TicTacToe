@@ -2,6 +2,9 @@ package tictactoe.agent;
 
 public class Agent {
 	
+	public Agent() {
+		
+	}
 	//PrincipleVariation is the bundled limit and path to solution
 	/**
 	 * 
@@ -14,7 +17,7 @@ public class Agent {
 	 * @param maximizingPlayer, true if trying to pick the lower limit
 	 * @return Returns the estimated HValue of a certain node
 	 */
-	float abSearch(ABNode node, int depth, float a, float b, Boolean maximizingPlayer) {
+	public float abSearch(ABNode node, int depth, float a, float b, Boolean maximizingPlayer) {
 		if(depth == 0 || node.isTerminal()) {
 			return node.getHVal();
 		}
