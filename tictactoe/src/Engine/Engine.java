@@ -31,11 +31,15 @@ public class Engine {
 		while(gameRunning) {
 			System.out.println("Please enter the checker location to move");
 			selection = scanner.nextInt();
-			currentState.checkValidSelection(selection);
+			while(!currentState.checkValidSelection(selection)) {
+				System.out.println("Please select a valid piece.");
+				selection = scanner.nextInt();
+			}
 			System.out.println("Please enter the location to move the checker");
 			selectionMoveTo = scanner.nextInt();
 			while(!currentState.checkValidMove(selection, selectionMoveTo)) {
 				System.out.println("Please enter a valid move. You must jump if you can.");
+				selection = scanner.nextInt();
 			}
 			movePiece(selection, selectionMoveTo);
 			rerender();

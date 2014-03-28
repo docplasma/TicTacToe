@@ -34,7 +34,6 @@ public class ABNode implements Comparator {
 	 * @return the hCost
 	 */
 	public float getHVal() {
-		//TODO Implement hcost generation
 		return state.getHVal();
 	}
 	/**

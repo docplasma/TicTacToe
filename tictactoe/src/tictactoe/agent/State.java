@@ -13,6 +13,7 @@ public class State {
 	int numBlackKings;
 	Vector<Integer> tiles;
 	Vector<JumpPair> possibleJumpLocations;
+	Vector<JumpPair> possibleMoveLocations;
 	public State() {
 		initState();
 	}
@@ -23,7 +24,6 @@ public class State {
 		numWhiteKings = state.getNumWhiteKings();
 		numBlackKings = state.getNumBlackKings();
 		tiles = new Vector<Integer>(state.getTiles());
-		possibleJumpLocations = new Vector<JumpPair>();
 	}
 	
 	private void initState() {
@@ -34,8 +34,8 @@ public class State {
 		numBlackKings = 0;
 		tiles = new Vector<Integer>(32);
 		placePieces(0,0,0,31);
-		placePieces(0,1, 0, 12); //Starting at pos(0), put 20 white pieces down
-		placePieces(20,2, 0, 12);//Starting at pos(25), put 20 black pieces down
+		placePieces(0,1, 0, 12); //Starting at pos(0), put 20 black pieces down
+		placePieces(20,2, 0, 12);//Starting at pos(25), put 20 white pieces down
 	}
 	
 	private void placePieces(int start, int piece, int a, int b) {
@@ -50,8 +50,6 @@ public class State {
 		//Init start/end to moving sides pieces
 		int start = 0;
 		int end = tiles.size() - 1;
-		//TODO Determine way to know whos children we are generating?
-		
 		//Generate states for all pieces of current side
 		while(start<end) {
 			//Skip blank spaces and pieces not on current side
@@ -544,7 +542,6 @@ public class State {
 		validState = val;
 	}
 	public float getHVal() {
-		// TODO Auto-generated method stub
 		float wPiece = 1;
 		float wKing = (float)1.5;
 		float wDistance =(float) 0.01;
@@ -599,13 +596,17 @@ public class State {
 	}
 	public boolean checkValidSelection(int selection) {
 		boolean valid = false;
-		if(selection == 2 || selection == 4) {
+		if(tiles.get(selection) == 2 || tiles.get(selection) == 4) {
 			valid = true;
 		} else {
 			System.out.println("Please select one of the red pieces.");
 		}
 		if(jumpPossible()) {
-			
+			for(JumpPair possibleJumps : possibleJumpLocations) {
+				if(selection == possibleJumps.getSelection()) {
+					valid = true;
+				}
+			}
 		} else {
 			valid = true;
 		}
@@ -616,7 +617,7 @@ public class State {
 		boolean result = false;
 		int start = 0;
 		int end = tiles.size() - 1;
-		
+		possibleJumpLocations = new Vector<JumpPair>();
 		while(start<end) {
 			if(tiles.get(start) == 0 || tiles.get(start) % 2 == 1) {
 				start++;
@@ -653,37 +654,7 @@ public class State {
 		}
 		return valid;
 	}
-	//This method recursively checks if there is a valid jump after the initial jump
-	/*private boolean jumpGuanlet(int jumpLocation) {
-		if(start%4%2 == 0) {
-			//JumpNW Even
-			result = jumpPossibleDirection(-4, -9, jumpLocation);
-			if(result == true) valid = true;
-			//JumpNE Even
-			result = jumpPossibleDirection(-3, -7, jumpLocation);
-			if(result == true) valid = true;
-			//JumpSW Even
-			result = jumpPossibleDirection(4, 7, jumpLocation);
-			if(result == true) valid = true;
-			//JumpSE Even
-			result = jumpPossibleDirection(5, 9, jumpLocation);
-			if(result == true) valid = true;
-		} else {
-			//JumpNW Odd
-			result = jumpPossibleDirection(-5, -9, jumpLocation);
-			if(result == true) valid = true;
-			//JumpNE Odd
-			result = jumpPossibleDirection(-4, -7, jumpLocation);
-			if(result == true) valid = true;
-			//JumpSW Odd
-			result = jumpPossibleDirection(5, 7, jumpLocation);
-			if(result == true) valid = true;
-			//JumpSE Odd
-			result = jumpPossibleDirection(4, 9, jumpLocation);
-			if(result == true) valid = true;
-		}
-	}*/
-	private boolean jumpPossibleDirection(int jumped, int jumpLocation, int start) {
+	private boolean jumpPossibleDirection(int jumped, int jumpLocationOffset, int start) {
 		boolean valid = false;
 
 		//Skip blank spaces and pieces not on current side
@@ -696,13 +667,14 @@ public class State {
 		//jump nw = -4/-5/-9 ne = -3/-4/-7
 	
 		//JumpNW Starting on even row
-		if (start - jumped < 0 || start - jumpLocation < 0) {
+		if (start + jumped < 0 || start + jumpLocationOffset > tiles.size()) {
 		} else {
 			//If the tile that is being jumped is of the opposite player, jump
-			if(tiles.get(start - jumped) == 0 && tiles.get(start - jumped) % 2 == 0 &&
-					tiles.get(start - jumpLocation) == 0) {
+			if(tiles.get(start + jumped) == 0 && tiles.get(start + jumped) % 2 == 0 &&
+					tiles.get(start + jumpLocationOffset) == 0) {
 				valid = true;
-				possibleJumpLocations.add(new JumpPair(start, jumpLocation));
+				JumpPair pair = new JumpPair(start, start + jumpLocationOffset);
+				possibleJumpLocations.add(pair);
 			}	
 		}
 		return valid;
@@ -710,8 +682,77 @@ public class State {
 	public boolean checkValidMove(int selection, int moveLocation) {
 		boolean valid = false;
 		JumpPair userMove = new JumpPair(selection, moveLocation);
+		getValidMoveList(selection);
+		for(JumpPair possibleMoves : possibleMoveLocations) {
+			if(JumpPair.compareJumpPair(userMove, possibleMoves)) {
+				valid = true;
+			}
+		}
 		for(JumpPair possibleJumps : possibleJumpLocations) {
-			JumpPair.compareJumpPair(userMove, possibleJumps);
+			if(JumpPair.compareJumpPair(userMove, possibleJumps)) {
+				valid = true;
+			}
+		}
+		return valid;
+	}
+	public boolean getValidMoveList(int selection) {
+		boolean valid = false;
+		boolean result = false;
+		int start = 0;
+		int end = tiles.size() - 1;
+		possibleMoveLocations = new Vector<JumpPair>();
+		while(start<end) {
+			if(tiles.get(start) == 0 || tiles.get(start) % 2 == 1) {
+				start++;
+				continue;
+			}
+			//jump sw = 4/5/7 se = 5/4/9
+			//jump nw = -4/-5/-9 ne = -3/-4/-7
+			if(start%4%2 == 0) {
+				//JumpNW Even
+				result = possibleMoveDirections(selection, -4);
+				if(result == true) valid = true;
+				//JumpNE Even
+				result = possibleMoveDirections(selection, -3);
+				if(result == true) valid = true;
+				//JumpSW Even
+				result = possibleMoveDirections(selection, 4);
+				if(result == true) valid = true;
+				//JumpSE Even
+				result = possibleMoveDirections(selection, 5);
+				if(result == true) valid = true;
+			} else {
+				//JumpNW Odd
+				result = possibleMoveDirections(selection, -5);
+				if(result == true) valid = true;
+				//JumpNE Odd
+				result = possibleMoveDirections(selection, -4);
+				if(result == true) valid = true;
+				//JumpSW Odd
+				result = possibleMoveDirections(selection, 5);
+				if(result == true) valid = true;
+				//JumpSE Odd
+				result = possibleMoveDirections(selection, 4);
+				if(result == true) valid = true;
+			}
+			start++;
+		}
+		return valid;
+	}
+	private boolean possibleMoveDirections(int selection, int moveOffset) {
+		boolean valid = false;
+		//jump sw = 4/5/7 se = 5/4/9
+		//jump nw = -4/-5/-9 ne = -3/-4/-7
+	
+		//JumpNW Starting on even row
+		if (selection + moveOffset < 0 || selection + moveOffset > tiles.size()) {
+		} else {
+			//If the tile that is being jumped is of the opposite player, jump
+			if(tiles.get(selection + moveOffset) == 0) {
+				valid = true;
+				JumpPair pair = new JumpPair(selection, selection + moveOffset);
+				possibleMoveLocations.add(pair);
+			}	
 		}
 		return valid;
 	}
