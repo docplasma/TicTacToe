@@ -525,8 +525,8 @@ public class State {
 	}
 	private static void swap(Vector<Integer> tiles, int a, int b) {
 		int temp = tiles.get(a);
-		tiles.add(a, tiles.get(b));
-		tiles.add(b, temp);
+		tiles.set(a, tiles.get(b));
+		tiles.set(b, temp);
 		
 	}
 	private void blackLosePiece() {

@@ -19,12 +19,13 @@ public class Engine {
 	
 	public Engine() {
 		State initialState = new State();
-		initGraphics(gameWindow, initialState);
+		initGraphics(initialState);
 		currentState = initialState;
 		gameRunning = true;
 		GameLoop();
 	}
-	public void GameLoop() {
+	//GameLoop With Checks
+	/*public void GameLoop() {
 		Scanner scanner = new Scanner(System.in);
 		int selection = 0;
 		int selectionMoveTo = 0;
@@ -61,6 +62,29 @@ public class Engine {
 			
 		}
 		scanner.close();
+	}*/
+	public void GameLoop() {
+		Scanner scanner = new Scanner(System.in);
+		int selection = 0;
+		int selectionMoveTo = 0;
+		while(gameRunning) {
+			System.out.println("Please enter the checker location to move");
+			selection = scanner.nextInt();
+			System.out.println("Please enter the location to move the checker");
+			selectionMoveTo = scanner.nextInt();
+			movePiece(selection, selectionMoveTo);
+			rerender();
+			System.out.println("Is there another jump available? 0=no 1=yes");
+			if(scanner.nextInt() == 1) {
+				System.out.println("Please enter the checker location to move");
+				selection = scanner.nextInt();
+				System.out.println("Please enter the location to move the checker");
+			}
+			computerMove();
+			rerender();
+			
+		}
+		scanner.close();
 	}
 	private void computerMove() {
 		Agent agent = new Agent();
@@ -77,7 +101,7 @@ public class Engine {
 		currentState.movePiece(selection, selectionMoveTo);
 		
 	}
-	private void initGraphics(SurfaceWindow gameWindow, State initialState) {
+	private void initGraphics(State initialState) {
 		JFrame gameFrame = new JFrame();
 		gameWindow = new SurfaceWindow(initialState);
 		gameFrame.add(gameWindow);
@@ -86,6 +110,7 @@ public class Engine {
 		gameFrame.setVisible(true);
 	}
 	public void rerender() {
+		if(gameWindow == null) System.out.println("gameWindow is null");
 		gameWindow.repaint();
 	}
 }

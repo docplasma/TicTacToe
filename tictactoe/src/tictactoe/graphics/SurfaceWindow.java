@@ -9,26 +9,38 @@ import tictactoe.agent.State;
 
 public class SurfaceWindow extends JPanel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7432350110440229094L;
 	int TILEWIDTH = 100;
 	int TILEHEIGHT = 100;
 	int NUMXTILES = 8;
 	int NUMYTILES = 8;
+	//boolean needsCheckersPositionUpdate;
+	State currentState;
 	Checkerboard board;
 	Vector<CheckerPiece> checkerPieces;
 	
 	public SurfaceWindow() {
 		board = new Checkerboard();
 		checkerPieces = new Vector<CheckerPiece>();
+		//needsCheckersPositionUpdate = false;
 		this.setVisible(true);
 		this.repaint();
 	}
 	public SurfaceWindow(State state) {
 		board = new Checkerboard();
 		checkerPieces = new Vector<CheckerPiece>();
+		currentState = state;
+		//needsCheckersPositionUpdate = false;
 		loadPieces(state.getTiles());
 		repaint();
 	}
 	public void paintComponent(Graphics g) {
+		//g.drawRect(0, 0, 1000, 1000);
+		checkerPieces.removeAllElements();
+		loadPieces(currentState.getTiles());
 		if(checkerPieces != null) {
 			for(CheckerPiece piece : checkerPieces) {
 				piece.setBounds(piece.getXPos(), piece.getYPos(), 100, 100);
