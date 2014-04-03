@@ -1,6 +1,8 @@
 package tictactoe.graphics;
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.Vector;
 
 import javax.swing.JPanel;
@@ -27,27 +29,30 @@ public class SurfaceWindow extends JPanel {
 		checkerPieces = new Vector<CheckerPiece>();
 		//needsCheckersPositionUpdate = false;
 		this.setVisible(true);
-		this.repaint();
+		//this.repaint();
 	}
 	public SurfaceWindow(State state) {
 		board = new Checkerboard();
 		checkerPieces = new Vector<CheckerPiece>();
 		currentState = state;
 		//needsCheckersPositionUpdate = false;
-		loadPieces(state.getTiles());
-		repaint();
+		//loadPieces(state.getTiles());
+		//repaint();
 	}
 	public void paintComponent(Graphics g) {
-		//g.drawRect(0, 0, 1000, 1000);
+		this.setLayout(null);
+		g.setColor(Color.WHITE);
+		g.drawRect(0, 0, 800, 800);
 		checkerPieces.removeAllElements();
 		loadPieces(currentState.getTiles());
 		if(checkerPieces != null) {
 			for(CheckerPiece piece : checkerPieces) {
-				piece.setBounds(piece.getXPos(), piece.getYPos(), 100, 100);
 				add(piece);
+				piece.setBounds(piece.getXPos(), piece.getYPos(), 100, 100);
 			}
 			board.setBounds(0,0, 800, 800);
 			add(board);
+			int i = 0;
 		}
 	}
 	public void loadPieces(Vector<Integer> tiles) {

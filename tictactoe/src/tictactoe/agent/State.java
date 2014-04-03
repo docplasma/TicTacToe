@@ -52,30 +52,51 @@ public class State {
 		int end = tiles.size() - 1;
 		//Generate states for all pieces of current side
 		while(start<end) {
-			//Skip blank spaces and pieces not on current side
+			//Skip blank spaces and pieces not on current side+
+			//Computer is 0, and has odd pieces
 			if(tiles.get(start) == 0 ||
-					tiles.get(start) % 2 == 0 && player == 1 ||
-					tiles.get(start) % 2 == 1 && player == 0) {
+					tiles.get(start) % 2 == 0 && player == 0 ||
+					tiles.get(start) % 2 == 1 && player == 1) {
 				start++;
 				continue;
 			}
 			//Skip black men since they cannot move backwards
 			if(tiles.get(start) == 1 && player == 0) {
+				start++;
 				continue;
 			}
-			State possibleState = new State(state);
+			//Left corner pieces can't move NW
+			if(start == 4 || start == 12 || start == 20 || start == 28) {
+				start++;
+				continue;
+			}
+			State possibleState = null;
 			if(start%4%2 == 0) {
 				if (start - 4 < 0) {
-					possibleState.setValid(false);
+					start++;
+					continue;
 				} else {
-					swap(tiles, start-4, start);
+					if(tiles.get(start - 4) == 0) {
+						possibleState = new State(state);
+						swap(possibleState.getTiles(), start - 4, start);
+					} else {
+						start++;
+						continue;
+					}
 				}
 				
 			} else {
 				if (start - 5 < 0) {
-					possibleState.setValid(false);
+					start++;
+					continue;
 				} else {
-					swap(tiles, start-5, start);
+					if(tiles.get(start - 5) == 0) {
+						possibleState = new State(state);
+						swap(possibleState.getTiles(), start - 5, start);
+					} else {
+						start++;
+						continue;
+					}
 				}
 			}
 			//If the move was actually possible, add to list of states
@@ -96,28 +117,48 @@ public class State {
 		while(start<end) {
 			//Skip blank spaces and pieces not on current side
 			if(tiles.get(start) == 0 ||
-					tiles.get(start) % 2 == 0 && player == 1 ||
-					tiles.get(start) % 2 == 1 && player == 0) {
+					tiles.get(start) % 2 == 0 && player == 0 ||
+					tiles.get(start) % 2 == 1 && player == 1) {
 				start++;
 				continue;
 			}
 			//Skip black men since they cannot move backwards
 			if(tiles.get(start) == 1 && player == 0) {
+				start++;
 				continue;
 			}
-			State possibleState = new State(state);
+			//Right corner pieces can't move NE
+			if(start == 3 || start == 11 || start == 19 || start == 27) {
+				start++;
+				continue;
+			}
+			State possibleState = null;
 			if(start%4%2 == 0) {
 				if (start - 3 < 0) {
-					possibleState.setValid(false);
+					start++;
+					continue;
 				} else {
-					swap(tiles, start - 3, start);
+					if(tiles.get(start - 3) == 0) {
+						possibleState = new State(state);
+						swap(possibleState.getTiles(), start - 3, start);
+					} else {
+						start++;
+						continue;
+					}
 				}
 				
 			} else {
 				if (start - 4 < 0) {
-					possibleState.setValid(false);
+					start++;
+					continue;
 				} else {
-					swap(tiles, start - 4, start);
+					if(tiles.get(start - 4) == 0) {
+						possibleState = new State(state);
+						swap(possibleState.getTiles(), start - 4, start);
+					} else {
+						start++;
+						continue;
+					}
 				}
 			}
 			//If the move was actually possible, add to list of states
@@ -138,28 +179,49 @@ public class State {
 		while(start<end) {
 			//Skip blank spaces and pieces not on current side
 			if(tiles.get(start) == 0 ||
-					tiles.get(start) % 2 == 0 && player == 1 ||
-					tiles.get(start) % 2 == 1 && player == 0) {
+					tiles.get(start) % 2 == 0 && player == 0 ||
+					tiles.get(start) % 2 == 1 && player == 1) {
 				start++;
 				continue;
 			}
 			//Skip white men since they cannot move backwards
-			if(tiles.get(start) == 2 && player == 0) {
+			if(tiles.get(start) == 2 && player == 1) {
+				start++;
 				continue;
 			}
-			State possibleState = new State(state);
+
+			//Left corner pieces can't move SW
+			if(start == 4 || start == 12 || start == 20 || start == 28) {
+				start++;
+				continue;
+			}
+			State possibleState = null;
 			if(start%4%2 == 0) {
 				if (start + 4 > tiles.size() - 1) {
-					possibleState.setValid(false);
+					start++;
+					continue;
 				} else {
-					swap(tiles, start + 4, start);
+					if(tiles.get(start + 4) == 0) {
+						possibleState = new State(state);
+						swap(possibleState.getTiles(), start + 4, start);
+					} else {
+						start++;
+						continue;
+					}
 				}
 				
 			} else {
-				if (start + 5 > tiles.size() - 1) {
-					possibleState.setValid(false);
+				if (start + 3 > tiles.size() - 1) {
+					start++;
+					continue;
 				} else {
-					swap(tiles, start + 5, start);
+					if(tiles.get(start + 3) == 0) {
+						possibleState = new State(state);
+						swap(possibleState.getTiles(), start + 5, start);
+					} else {
+						start++;
+						continue;
+					}
 				}
 			}
 			//If the move was actually possible, add to list of states
@@ -180,28 +242,48 @@ public class State {
 		while(start<end) {
 			//Skip blank spaces and pieces not on current side
 			if(tiles.get(start) == 0 ||
-					tiles.get(start) % 2 == 0 && player == 1 ||
-					tiles.get(start) % 2 == 1 && player == 0) {
+					tiles.get(start) % 2 == 0 && player == 0 ||
+					tiles.get(start) % 2 == 1 && player == 1) {
 				start++;
 				continue;
 			}
 			//Skip white men since they cannot move backwards
-			if(tiles.get(start) == 2 && player == 0) {
+			if(tiles.get(start) == 2 && player == 1) {
+				start++;
 				continue;
 			}
-			State possibleState = new State(state);
+			//Right corner pieces can't move NE
+			if(start == 3 || start == 11 || start == 19 || start == 27) {
+				start++;
+				continue;
+			}
+			State possibleState = null;
 			if(start%4%2 == 0) {
 				if (start + 5 > tiles.size() - 1) {
-					possibleState.setValid(false);
+					start++;
+					continue;
 				} else {
-					swap(tiles, start + 5, start);
+					if(tiles.get(start + 5) == 0) {
+						possibleState = new State(state);
+						swap(possibleState.getTiles(), start + 5, start);
+					} else {
+						start++;
+						continue;
+					}
 				}
 				
 			} else {
 				if (start + 4 > tiles.size() - 1) {
-					possibleState.setValid(false);
+					start++;
+					continue;
 				} else {
-					swap(tiles, start + 4, start);
+					if(tiles.get(start + 4) == 0) {
+						possibleState = new State(state);
+						swap(possibleState.getTiles(), start + 4, start);
+					} else {
+						start++;
+						continue;
+					}
 				}
 			}
 			//If the move was actually possible, add to list of states
@@ -232,29 +314,37 @@ public class State {
 		while(start<end) {
 			//Skip blank spaces and pieces not on current side
 			if(tiles.get(start) == 0 ||
-					tiles.get(start) % 2 == 0 && player == 1 ||
-					tiles.get(start) % 2 == 1 && player == 0) {
+					tiles.get(start) % 2 == 0 && player == 0 ||
+					tiles.get(start) % 2 == 1 && player == 1) {
 				start++;
 				continue;
 			}
 			//Skip black men since they cannot move backwards
 			if(tiles.get(start) == 1 && player == 0) {
+				start++;
 				continue;
 			}
-			State possibleState = new State(state);
+			//Right corner pieces can't jump NW
+			if(start == 0 || start == 4|| start == 8 || start == 12 || start == 16 || start == 20 || start == 24 || start == 28) {
+				start++;
+				continue;
+			}
+			State possibleState = null;
 			//jump sw = 7 se = 9
 			//jump nw = -9 ne = -7
 			if(start%4%2 == 0) {
 				//JumpNW Starting on even row
 				if (start - 4 < 0 || start - 9 < 0) {
-					possibleState.setValid(false);
+					start++;
+					continue;
 				} else {
 					//If the tile that is being jumped is of the opposite player, jump
 					if(tiles.get(start - 4) == 0 && (tiles.get(start - 4) + 1) % 2 == player &&
 							tiles.get(start - 9) == 0) {
-						swap(tiles, start - 9, start);
+						possibleState = new State(state);
+						swap(possibleState.getTiles(), start - 9, start);
 						//take the jumped piece of the board
-						tiles.set(start - 4, 0);
+						possibleState.getTiles().set(start - 4, 0);
 						jumpMade = true;
 						if(player == 0) {
 							possibleState.whiteLosePiece();
@@ -266,14 +356,16 @@ public class State {
 			} else {
 				//JumpNW Starting on odd row
 				if (start - 5 < 0 || start - 9 < 0) {
-					possibleState.setValid(false);
+					start++;
+					continue;
 				} else {
 					//If the tile that is being jumped is of the opposite player, jump
 					if(tiles.get(start - 5) == 0 && (tiles.get(start - 5) + 1) % 2 == player &&
 							tiles.get(start - 9) == 0) {
-						swap(tiles, start - 9, start);
+						possibleState = new State(state);
+						swap(possibleState.getTiles(), start - 9, start);
 						//take the jumped piece of the board
-						tiles.set(start - 5, 0);
+						possibleState.getTiles().set(start - 5, 0);
 						jumpMade = true;
 						if(player == 0) {
 							possibleState.whiteLosePiece();
@@ -284,7 +376,7 @@ public class State {
 				}
 			}
 			//If the move was actually possible, add to list of states
-			if(possibleState.isValid() && jumpMade) {
+			if(possibleState != null && possibleState.isValid() && jumpMade) {
 				childStates.add(possibleState);
 			}
 			start++;
@@ -307,29 +399,37 @@ public class State {
 		while(start<end) {
 			//Skip blank spaces and pieces not on current side
 			if(tiles.get(start) == 0 ||
-					tiles.get(start) % 2 == 0 && player == 1 ||
-					tiles.get(start) % 2 == 1 && player == 0) {
+					tiles.get(start) % 2 == 0 && player == 0 ||
+					tiles.get(start) % 2 == 1 && player == 1) {
 				start++;
 				continue;
 			}
 			//Skip black men since they cannot move backwards
 			if(tiles.get(start) == 1 && player == 0) {
+				start++;
 				continue;
 			}
-			State possibleState = new State(state);
+			//Right corner pieces can't jump NE
+			if(start == 3 || start == 7|| start == 11 || start == 15 || start == 19 || start == 23 || start == 27 || start == 31) {
+				start++;
+				continue;
+			}
+			State possibleState = null;
 			//jump sw = 7 se = 9
 			//jump nw = -9 ne = -7
 			if(start%4%2 == 0) {
 				//JumpNE
 				if (start - 3 < 0 || start - 7 < 0) {
-					possibleState.setValid(false);
+					start++;
+					continue;
 				} else {
 					//If the tile that is being jumped is of the opposite player, jump
 					if(tiles.get(start - 3) == 0 && (tiles.get(start - 3) + 1) % 2 == player &&
 							tiles.get(start - 7) == 0) {
-						swap(tiles, start - 7, start);
+						possibleState = new State(state);
+						swap(possibleState.getTiles(), start - 7, start);
 						//take the jumped piece of the board
-						tiles.set(start - 3, 0);
+						possibleState.getTiles().set(start - 3, 0);
 						jumpMade = true;
 						if(player == 0) {
 							possibleState.whiteLosePiece();
@@ -341,14 +441,16 @@ public class State {
 			} else {
 				//JumpNE
 				if (start - 4 < 0 || start - 7 < 0) {
-					possibleState.setValid(false);
+					start++;
+					continue;
 				} else {
 					//If the tile that is being jumped is of the opposite player, jump
 					if(tiles.get(start - 4) == 0 && (tiles.get(start - 4) + 1) % 2 == player &&
 							tiles.get(start - 7) == 0) {
-						swap(tiles, start - 7, start);
+						possibleState = new State(state);
+						swap(possibleState.getTiles(), start - 7, start);
 						//take the jumped piece of the board
-						tiles.set(start - 4, 0);
+						possibleState.getTiles().set(start - 4, 0);
 						jumpMade = true;
 						if(player == 0) {
 							possibleState.whiteLosePiece();
@@ -359,7 +461,7 @@ public class State {
 				}
 			}
 			//If the move was actually possible, add to list of states
-			if(possibleState.isValid() && jumpMade) {
+			if(possibleState != null && possibleState.isValid() && jumpMade) {
 				childStates.add(possibleState);
 			}
 			start++;
@@ -381,29 +483,37 @@ public class State {
 		while(start<end) {
 			//Skip blank spaces and pieces not on current side
 			if(tiles.get(start) == 0 ||
-					tiles.get(start) % 2 == 0 && player == 1 ||
-					tiles.get(start) % 2 == 1 && player == 0) {
+					tiles.get(start) % 2 == 0 && player == 0 ||
+					tiles.get(start) % 2 == 1 && player == 1) {
 				start++;
 				continue;
 			}
 			//Skip white men since they cannot move backwards
 			if(tiles.get(start) == 2 && player == 0) {
+				start++;
 				continue;
 			}
-			State possibleState = new State(state);
+			//Right corner pieces can't jump SW
+			if(start == 0 || start == 4|| start == 8 || start == 12 || start == 16 || start == 20 || start == 24 || start == 28) {
+				start++;
+				continue;
+			}
+			State possibleState = null;
 			//jump sw = 7 se = 9
 			//jump nw = -9 ne = -7
 			if(start%4%2 == 0) {
 				//JumpSW
 				if (start + 4 > tiles.size() -1 || start + 7 > tiles.size() - 1) {
-					possibleState.setValid(false);
+					start++;
+					continue;
 				} else {
 					//If the tile that is being jumped is of the opposite player, jump
 					if(tiles.get(start + 4) == 0 && (tiles.get(start + 4) + 1) % 2 == player &&
 							tiles.get(start + 7) == 0) {
-						swap(tiles, start + 7, start);
+						possibleState = new State(state);
+						swap(possibleState.getTiles(), start + 7, start);
 						//take the jumped piece of the board
-						tiles.set(start + 4, 0);
+						possibleState.getTiles().set(start + 4, 0);
 						jumpMade = true;
 						if(player == 0) {
 							possibleState.whiteLosePiece();
@@ -415,15 +525,17 @@ public class State {
 			} else {
 				//JumpSW
 				if (start + 5 > tiles.size() -1 || start + 7 > tiles.size() - 1) {
-					possibleState.setValid(false);
+					start++;
+					continue;
 				} else {
 					//If the tile that is being jumped is of the opposite player, jump
 					if(tiles.get(start + 5) == 0 && (tiles.get(start + 5) + 1) % 2 == player &&
 							tiles.get(start + 7) == 0) {
-						swap(tiles, start + 7, start);
+						possibleState = new State(state);
+						swap(possibleState.getTiles(), start + 7, start);
 						//take the jumped piece of the board
 						jumpMade = true;
-						tiles.set(start + 5, 0);
+						possibleState.getTiles().set(start + 5, 0);
 						if(player == 0) {
 							possibleState.whiteLosePiece();
 						} else {
@@ -433,7 +545,7 @@ public class State {
 				}
 			}
 			//If the move was actually possible, add to list of states
-			if(possibleState.isValid() && jumpMade) {
+			if(possibleState != null && possibleState.isValid() && jumpMade) {
 				childStates.add(possibleState);
 			}
 			start++;
@@ -455,29 +567,37 @@ public class State {
 		while(start<end) {
 			//Skip blank spaces and pieces not on current side
 			if(tiles.get(start) == 0 ||
-					tiles.get(start) % 2 == 0 && player == 1 ||
-					tiles.get(start) % 2 == 1 && player == 0) {
+					tiles.get(start) % 2 == 0 && player == 0 ||
+					tiles.get(start) % 2 == 1 && player == 1) {
 				start++;
 				continue;
 			}
 			//Skip white men since they cannot move backwards
 			if(tiles.get(start) == 2 && player == 0) {
+				start++;
 				continue;
 			}
-			State possibleState = new State(state);
+			//Right corner pieces can't jump NE
+			if(start == 3 || start == 7|| start == 11 || start == 15 || start == 19 || start == 23 || start == 27 || start == 31) {
+				start++;
+				continue;
+			}
+			State possibleState = null;
 			//jump sw = 7 se = 9
 			//jump nw = -9 ne = -7
 			if(start%4%2 == 0) {
 				//JumpSE
 				if (start + 5 > tiles.size() -1 || start + 9 > tiles.size() - 1) {
-					possibleState.setValid(false);
+					start++;
+					continue;
 				} else {
 					//If the tile that is being jumped is of the opposite player, jump
 					if(tiles.get(start + 5) == 0 && (tiles.get(start + 5) + 1) % 2 == player &&
 							tiles.get(start + 9) == 0) {
-						swap(tiles, start + 9, start);
+						possibleState = new State(state);
+						swap(possibleState.getTiles(), start + 9, start);
 						//take the jumped piece of the board
-						tiles.set(start + 5, 0);
+						possibleState.getTiles().set(start + 5, 0);
 						jumpMade = true;
 						if(player == 0) {
 							possibleState.whiteLosePiece();
@@ -491,14 +611,16 @@ public class State {
 				
 				//JumpSE
 				if (start + 4 > tiles.size() -1 || start + 9 > tiles.size() - 1) {
-					possibleState.setValid(false);
+					start++;
+					continue;
 				} else {
 					//If the tile that is being jumped is of the opposite player, jump
 					if(tiles.get(start + 4) == 0 && (tiles.get(start + 4) + 1) % 2 == player &&
 							tiles.get(start + 9) == 0) {
-						swap(tiles, start + 9, start);
+						possibleState = new State(state);
+						swap(possibleState.getTiles(), start + 9, start);
 						//take the jumped piece of the board
-						tiles.set(start + 4, 0);
+						possibleState.getTiles().set(start + 4, 0);
 						jumpMade = true;
 						if(player == 0) {
 							possibleState.whiteLosePiece();
@@ -509,7 +631,7 @@ public class State {
 				}
 			}
 			//If the move was actually possible, add to list of states
-			if(possibleState.isValid() && jumpMade) {
+			if(possibleState != null && possibleState.isValid() && jumpMade) {
 				childStates.add(possibleState);
 			}
 			start++;

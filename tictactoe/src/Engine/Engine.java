@@ -88,8 +88,13 @@ public class Engine {
 	}
 	private void computerMove() {
 		Agent agent = new Agent();
+		Vector<State> possibleStates = new Vector<State>();
 		Vector<ABNode> possibleMoves = new Vector<ABNode>();
 		PriorityQueue<ABNode> sortedMoves = new PriorityQueue<ABNode>();
+		possibleStates = State.getChildren(currentState, 0);
+		for(State s : ((Vector<State>) State.getChildren(currentState, 0))) {
+			possibleMoves.add(new ABNode(null, s));
+	}
 		for(ABNode move : possibleMoves) {
 			//Find out how this move ranks, then multiply by zero since the list is sorted by ascending
 			move.setMoveValue(agent.abSearch(move, 5, Integer.MIN_VALUE, Integer.MAX_VALUE, true) * -1);
